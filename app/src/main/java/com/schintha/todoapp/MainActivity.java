@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private final int ADD_REQUEST_CODE = 2;
     private final int ADD_REQUEST_OK = 2;
 
-    ArrayList<TodoItem> todoItems = new ArrayList<>();
+    ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();
     ArrayAdapter<TodoItem> aToDoAdapter;
     ListView lvItems;
     EditText etEditText;
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     public void populateArrayItems(){
         readItems();
         aToDoAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, todoItems);
+        //aToDoAdapter = new CustomAdapter(this, todoItems);
     }
 
     private void readItems(){

@@ -17,7 +17,7 @@ import com.activeandroid.annotation.Table;
 @Table(name = "Tasks", id = "_task")
 public class TodoModel extends Model {
 
-    @Column(name = "task", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    @Column(name = "Task", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String task;
 
     public TodoModel() {
