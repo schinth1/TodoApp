@@ -5,12 +5,10 @@ package com.schintha.todoapp.model;
  */
 public class TodoItem {
 
-    //private int id;
     private String body;
 
     public TodoItem(String body)
     {
-        //this.id = id;
         this.body = body;
     }
 
@@ -22,11 +20,4 @@ public class TodoItem {
         this.body = body;
     }
 
-//    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
 }

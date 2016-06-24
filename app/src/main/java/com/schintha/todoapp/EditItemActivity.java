@@ -13,6 +13,7 @@ public class EditItemActivity extends AppCompatActivity {
 
     private final int SAVE_REQUEST_CODE = 1;
     EditText etEditText;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,24 +24,16 @@ public class EditItemActivity extends AppCompatActivity {
 
         etEditText = (EditText) findViewById(R.id.etEditText);
         etEditText.setText(getIntent().getStringExtra("edit_item"));
+        position = getIntent().getIntExtra("position", -1);
         etEditText.setSelection(etEditText.getText().length());
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     public void onUpdateItem(View view) {
         Intent saveIntent = new Intent(EditItemActivity.this, MainActivity.class);
         saveIntent.putExtra("save_item", etEditText.getText().toString());
+        saveIntent.putExtra("position", position);
         setResult(SAVE_REQUEST_CODE, saveIntent);
         finish();
-        //return true;
     }
 
 }

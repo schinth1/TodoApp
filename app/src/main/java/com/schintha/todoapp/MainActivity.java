@@ -1,6 +1,7 @@
 package com.schintha.todoapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.activeandroid.query.Select;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.schintha.todoapp.model.TodoItem;
 import com.schintha.todoapp.model.TodoModel;
 
@@ -38,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<TodoItem> aToDoAdapter;
     ListView lvItems;
     EditText etEditText;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,62 +81,50 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    public void populateArrayItems(){
+    public void populateArrayItems() {
         readItems();
-        aToDoAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, todoItems);
-        //aToDoAdapter = new CustomAdapter(this, todoItems);
+        aToDoAdapter = new CustomAdapter(this, todoItems);
     }
 
-    private void readItems(){
+    private void readItems() {
         List<TodoModel> taskList = new Select().from(TodoModel.class).execute();
         todoItems = new ArrayList<TodoItem>();
-        for(TodoModel task : taskList)
-        {
+        for (TodoModel task : taskList) {
             todoItems.add(new TodoItem(task.task));
         }
     }
 
-    private void writeItem(TodoItem item){
+    private void writeItem(TodoItem item) {
         TodoModel row = new TodoModel(item.getBody());
         row.save();
     }
 
-    private void updateItem(TodoItem oldItem, TodoItem newItem)
-    {
+    private void updateItem(TodoItem oldItem, TodoItem newItem) {
         TodoModel row = new Select().from(TodoModel.class).where("Task = ?", oldItem.getBody()).executeSingle();
         row.task = newItem.getBody();
         row.save();
     }
 
-    private void deleteItem(TodoItem deleteRow)
-    {
+    private void deleteItem(TodoItem deleteRow) {
         TodoModel row = new Select().from(TodoModel.class).where("Task = ?", deleteRow.getBody()).executeSingle();
         row.delete();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == EDIT_REQUEST_CODE && resultCode == EDIT_REQUEST_OK)
-        {
+        if (requestCode == EDIT_REQUEST_CODE && resultCode == EDIT_REQUEST_OK) {
             String task = data.getExtras().getString("save_item");
             //String newItem = new TodoItem(task, p);
             int position = data.getExtras().getInt("position");
             TodoItem itemOld = todoItems.get(position);
             TodoItem itemNew = new TodoItem(task);
             todoItems.set(position, itemNew);
-
             aToDoAdapter.notifyDataSetChanged();
-            //modifyItemDB(taskToEdit, newItem);
             updateItem(itemOld, itemNew);
         }
 
@@ -162,4 +159,43 @@ public class MainActivity extends AppCompatActivity {
         writeItem(item);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.schintha.todoapp/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.schintha.todoapp/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }
