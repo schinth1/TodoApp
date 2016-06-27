@@ -20,6 +20,7 @@ import com.activeandroid.query.Select;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.schintha.todoapp.model.Priority;
 import com.schintha.todoapp.model.TodoItem;
 import com.schintha.todoapp.model.TodoModel;
 
@@ -36,12 +37,12 @@ public class MainActivity extends AppCompatActivity {
     private final int EDIT_REQUEST_OK = 1;
 
     private final int ADD_REQUEST_CODE = 2;
-    private final int ADD_REQUEST_OK = 2;
+    private final int ADD_REQUEST_OK = 1;
 
     ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();
     ArrayAdapter<TodoItem> aToDoAdapter;
     ListView lvItems;
-    EditText etEditText;
+    //EditText etEditText;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         populateArrayItems();
         lvItems = (ListView) findViewById(R.id.lvItems);
         lvItems.setAdapter(aToDoAdapter);
-        etEditText = (EditText) findViewById(R.id.etEditText);
+        //etEditText = (EditText) findViewById(R.id.etEditText);
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent editIntent = new Intent(MainActivity.this, EditItemActivity.class);
                 editIntent.putExtra("edit_item", todoItems.get(position).getBody());
+                editIntent.putExtra("edit_priority", todoItems.get(position).getPriority().ordinal());
                 editIntent.putExtra("position", position);
                 startActivityForResult(editIntent, EDIT_REQUEST_CODE);
             }
@@ -95,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
         List<TodoModel> taskList = new Select().from(TodoModel.class).execute();
         todoItems = new ArrayList<TodoItem>();
         for (TodoModel task : taskList) {
-            todoItems.add(new TodoItem(task.task));
+            todoItems.add(new TodoItem(task.task, task.priority));
         }
     }
 
     private void writeItem(TodoItem item) {
-        TodoModel row = new TodoModel(item.getBody());
+        TodoModel row = new TodoModel(item.getBody(), item.getPriority());
         row.save();
     }
 
@@ -119,13 +121,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDIT_REQUEST_CODE && resultCode == EDIT_REQUEST_OK) {
             String task = data.getExtras().getString("save_item");
+            Priority pr = Priority.values()[data.getExtras().getInt("save_priority",0)];
             //String newItem = new TodoItem(task, p);
             int position = data.getExtras().getInt("position");
             TodoItem itemOld = todoItems.get(position);
-            TodoItem itemNew = new TodoItem(task);
+            TodoItem itemNew = new TodoItem(task, pr);
             todoItems.set(position, itemNew);
             aToDoAdapter.notifyDataSetChanged();
             updateItem(itemOld, itemNew);
+        }
+        else if (requestCode == ADD_REQUEST_CODE && resultCode == ADD_REQUEST_OK){
+            String task = data.getExtras().getString("save_item");
+            Priority pr = Priority.values()[data.getExtras().getInt("save_priority",0)];
+            TodoItem item = new TodoItem(task, pr);
+            aToDoAdapter.add(item);
+            //etEditText.setText("");
+            writeItem(item);
         }
 
     }
@@ -153,10 +164,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddItem(View view) {
-        TodoItem item = new TodoItem(etEditText.getText().toString());
-        aToDoAdapter.add(item);
-        etEditText.setText("");
-        writeItem(item);
+        Intent addIntent = new Intent(MainActivity.this, EditItemActivity.class);
+        addIntent.putExtra("edit_item", "");
+        startActivityForResult(addIntent, ADD_REQUEST_CODE);
+
+//        TodoItem item = new TodoItem(etEditText.getText().toString());
+//        aToDoAdapter.add(item);
+//        etEditText.setText("");
+//        writeItem(item);
     }
 
     @Override

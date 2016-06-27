@@ -10,4 +10,13 @@
         android:textSize="20dp"
         android:text="Task" />
 
+    <TextView
+        android:id="@+id/item_priority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="Priority" />
+
 </RelativeLayout>

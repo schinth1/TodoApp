@@ -7,12 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.schintha.todoapp.model.Priority;
 import com.schintha.todoapp.model.TodoItem;
 
 import java.util.ArrayList;
 
 /**
- * Created by sc043016 on 6/23/16.
+ * Created by schinth1 on 6/23/16.
  */
 public class CustomAdapter extends ArrayAdapter<TodoItem> {
 
@@ -31,8 +32,9 @@ public class CustomAdapter extends ArrayAdapter<TodoItem> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.todo_item, parent, false);
         TextView taskView = (TextView) rowView.findViewById(R.id.item_task);
+        TextView prView = (TextView) rowView.findViewById(R.id.item_priority);
         taskView.setText(todoItems.get(position).getBody());
-
+        prView.setText(todoItems.get(position).getPriority().name());
 
         return rowView;
     }

@@ -18,9 +18,9 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/etEditText"
-        android:layout_marginTop="121dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignBottom="@+id/npPriority"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="62dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -36,8 +36,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Edit item below:"
+        android:text="Add/Edit item below:"
         android:id="@+id/etActivityLabel"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/npPriority"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/etActivityLabel"
+        android:layout_toEndOf="@+id/btnSaveItem"
+        android:layout_marginStart="34dp" />
 </RelativeLayout>
